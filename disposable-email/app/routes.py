@@ -5,7 +5,7 @@ import email
 from email import policy
 from email.utils import parseaddr
 from flask import Blueprint, jsonify, request, render_template
-from app.models import save_email, get_inbox
+from app.models import save_email, get_inbox, INBOX_TTL_SECONDS
 
 # -------------------------------------------------------------------
 # Configuration & Blueprint Setup
@@ -41,7 +41,7 @@ def index():
 def generate_email():
     """
     Creates a new random temporary email address and returns it to the client.
-    Default TTL is set to 600 seconds (10 minutes).
+    TTL is 180 seconds (3 minutes), matching the Redis expiration in models.py.
     """
     username = generate_random_string()
     email_address = f"{username}@{DOMAIN}"
@@ -49,7 +49,7 @@ def generate_email():
     return jsonify({
         "status": "success",
         "email": email_address,
-        "ttl_seconds": 600,
+        "ttl_seconds": INBOX_TTL_SECONDS,
     }), 200
 
 
@@ -93,7 +93,7 @@ def receive_webhook():
     # 1. Security Check: Verify secret header against environment variable
     secret = request.headers.get("X-Webhook-Secret")
     expected_secret = os.environ.get("WEBHOOK_SECRET", "super-secret-key")
-    
+
     if secret != expected_secret:
         return jsonify({"error": "Unauthorized"}), 401
 
