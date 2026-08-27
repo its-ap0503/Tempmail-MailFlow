@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disposable Email Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+            <h1>Temp Mail Generator</h1>
+            <p>Your temporary, auto-expiring inbox.</p>
+        </header>
+
+        <!-- Email Generation Box -->
+        <section class="card">
+            <div class="email-box">
+                <input type="text" id="email-display" readonly placeholder="Click 'Generate' to get an email">
+                <button id="btn-generate" onclick="generateNewEmail()">Generate Email</button>
+            </div>
+            <div class="meta-info">
+                <span>Expires in: <strong id="timer">--:--</strong></span>
+                <button id="btn-refresh" onclick="fetchMessages()" disabled>Sync Inbox</button>
+            </div>
+        </section>
+
+        <!-- Messages List -->
+        <section class="card">
+            <h2>Inbox Messages</h2>
+            <div id="inbox-list" class="inbox-container">
+                <p class="empty-state">No messages received yet.</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+/* 1. Original Base Styles (Dark Default) */
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --accent-color: #38bdf8;
+    --text-color: #f8fafc;
+    --muted-color: #94a3b8;
+    --border-color: #334155;
+    --button-hover: #0284c7;
+}
+
+/* 2. Simple Light Theme Class Override */
+body.light-theme {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --accent-color: #0284c7;
+    --text-color: #0f172a;
+    --muted-color: #64748b;
+    --border-color: #cbd5e1;
+    --button-hover: #0369a1;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 650px;
+    margin: 40px 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+header p {
+    color: var(--muted-color);
+    margin: 0;
+}
+
+/* Toggle Button Styling */
+.theme-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* 3. UI Card Components */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.email-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+input[type="text"] {
+    flex: 1;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+}
+
+button {
+    background-color: var(--accent-color);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+    background-color: var(--button-hover);
+    color: #fff;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 4. Metadata & Messages */
+.meta-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted-color);
+    font-size: 0.9rem;
+}
+
+.inbox-container {
+    min-height: 120px;
+}
+
+.empty-state {
+    color: var(--muted-color);
+    text-align: center;
+    padding: 20px 0;
+}
+
+.message-card {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.message-body {
+    color: var(--text-color);
+    white-space: pre-wrap;
+}
