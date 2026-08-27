@@ -13,7 +13,7 @@ from app.models import save_email, get_inbox, INBOX_TTL_SECONDS
 main_bp = Blueprint("main", __name__)
 
 # The domain used for your temporary addresses
-DOMAIN = "temp.techwithap.site"
+DOMAIN = "techwithap.site"
 
 
 def generate_random_string(length=9):
