@@ -6,6 +6,7 @@ from email import policy
 from email.utils import parseaddr
 from flask import Blueprint, jsonify, request, render_template
 from app.models import save_email, get_inbox, INBOX_TTL_SECONDS
+from app.extensions import limiter
 
 # -------------------------------------------------------------------
 # Configuration & Blueprint Setup
@@ -38,6 +39,7 @@ def index():
 # Route 2: Generate a Disposable Email
 # -------------------------------------------------------------------
 @main_bp.route("/generate", methods=["GET"])
+@limiter.limit("5 per minute") # Prevent users from spam-generating emails
 def generate_email():
     """
     Creates a new random temporary email address and returns it to the client.
@@ -57,6 +59,7 @@ def generate_email():
 # Route 3: Fetch Inbox Messages
 # -------------------------------------------------------------------
 @main_bp.route("/inbox/<email_address>", methods=["GET"])
+@limiter.limit("5 per minute")
 def fetch_inbox(email_address):
     """
     Queries Redis for any messages stored under the specified email key.
@@ -84,7 +87,14 @@ def fetch_inbox(email_address):
 # -------------------------------------------------------------------
 # Route 4: Inbound Email Webhook Receiver
 # -------------------------------------------------------------------
+
+def get_recipient_email() :
+    # Attempt to pull the recipient from a custom header first (Best Practice)
+    # Fallback to a global bucket if the header is missing
+    return request.headers.get("X-Forwarded-To", "global_inbox")
+
 @main_bp.route("/webhook/email", methods=["POST"])
+@limiter.limit("5 per minute", key_func=get_recipient_email) # Max 5 emails per minute per inbox
 def receive_webhook():
     """
     Receives raw email data forwarded by the Cloudflare Worker,

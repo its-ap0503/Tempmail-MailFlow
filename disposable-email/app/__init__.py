@@ -1,6 +1,7 @@
 # initialises flask application and configuration 
 from flask import Flask
 import os
+from app.extensions import limiter
 
 def create_app():
     # 1. Instantiate the flask object 
@@ -13,7 +14,8 @@ def create_app():
     # 2. Configure app settings from environment or defaults
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-12345")
 
-
+    # Initialize the limiter with the app
+    limiter.init_app(app)
 
     # Importing here inside the function prevents circular dependency issues
     from app.routes import main_bp
