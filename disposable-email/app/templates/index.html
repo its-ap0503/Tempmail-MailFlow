@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disposable Email Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* Minimal footer styling using your existing CSS variables to keep UI identical */
+        /* Minimal footer styling keeping your UI identical */
         .dev-footer {
             text-align: center;
             margin-top: 30px;
@@ -15,14 +16,17 @@
         }
         .dev-footer strong {
             color: var(--accent-color);
-            cursor: pointer; /* Subtle hint that it's clickable */
+            cursor: pointer;
             user-select: none;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        .dev-footer strong:hover {
+            color: var(--button-hover);
+            text-shadow: 0 0 8px var(--accent-glow);
         }
     </style>
 </head>
 <body data-architect="Alok_Pandey_Backend_Dev">
-    <!-- 🕵️‍♂️ EASTER EGG #1: Hello fellow developer! I see you inspecting the DOM. - Alok Pandey 🚀 -->
-    
     <div class="container">
         <header>
             <button class="theme-btn" onclick="toggleTheme()">☀️ Light Mode</button>
@@ -30,8 +34,7 @@
             <p>Your temporary, auto-expiring inbox.</p>
         </header>
 
-        <!-- Email Generation Box -->
-        <section class="card">
+        <section class="card" id="generator-card">
             <div class="email-box">
                 <input type="text" id="email-display" readonly placeholder="Click 'Generate' to get an email">
                 <button id="btn-generate" onclick="generateNewEmail()">Generate Email</button>
@@ -42,28 +45,26 @@
             </div>
         </section>
 
-        <!-- Messages List -->
-        <section class="card">
+        <section class="card" id="inbox-card">
             <h2>Inbox Messages</h2>
             <div id="inbox-list" class="inbox-container">
                 <p class="empty-state">No messages received yet.</p>
             </div>
         </section>
 
-        <!-- The Footer -->
         <footer class="dev-footer">
-            <p>Made with <span style="color: #ef4444;">&hearts;</span> by <strong onclick="triggerEasterEgg()">Alok Pandey</strong></p>
+            <p>Made with <span style="color: #10b981;">&hearts;</span> by <strong onclick="triggerEasterEgg()">Alok Pandey</strong></p>
         </footer>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
     
-    <!-- Easter Egg Scripts -->
     <script>
         // EASTER EGG #2: The Console Signature
         console.log(
             "%c🚀 System Engineered by Alok Pandey | Backend Dev | C++ • Python • Go ", 
-            "color: #38bdf8; font-size: 14px; font-weight: bold; background: #0f172a; padding: 8px; border: 1px solid #334155; border-radius: 4px;"
+            "color: #10b981; font-size: 14px; font-weight: bold; background: #050505; padding: 8px; border: 1px solid #10b981; border-radius: 4px;"
         );
 
         // EASTER EGG #3: The Secret Click interaction
