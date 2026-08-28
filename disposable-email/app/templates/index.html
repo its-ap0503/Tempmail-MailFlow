@@ -5,8 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disposable Email Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Minimal footer styling using your existing CSS variables to keep UI identical */
+        .dev-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--muted-color);
+            font-size: 0.85rem;
+        }
+        .dev-footer strong {
+            color: var(--accent-color);
+            cursor: pointer; /* Subtle hint that it's clickable */
+            user-select: none;
+        }
+    </style>
 </head>
-<body>
+<body data-architect="Alok_Pandey_Backend_Dev">
+    <!-- 🕵️‍♂️ EASTER EGG #1: Hello fellow developer! I see you inspecting the DOM. - Alok Pandey 🚀 -->
+    
     <div class="container">
         <header>
             <button class="theme-btn" onclick="toggleTheme()">☀️ Light Mode</button>
@@ -33,8 +49,40 @@
                 <p class="empty-state">No messages received yet.</p>
             </div>
         </section>
+
+        <!-- The Footer -->
+        <footer class="dev-footer">
+            <p>Made with <span style="color: #ef4444;">&hearts;</span> by <strong onclick="triggerEasterEgg()">Alok Pandey</strong></p>
+        </footer>
     </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
+    
+    <!-- Easter Egg Scripts -->
+    <script>
+        // EASTER EGG #2: The Console Signature
+        console.log(
+            "%c🚀 System Engineered by Alok Pandey | Backend Dev | C++ • Python • Go ", 
+            "color: #38bdf8; font-size: 14px; font-weight: bold; background: #0f172a; padding: 8px; border: 1px solid #334155; border-radius: 4px;"
+        );
+
+        // EASTER EGG #3: The Secret Click interaction
+        let tapCount = 0;
+        function triggerEasterEgg() {
+            tapCount++;
+            if (tapCount === 5) {
+                // Do a fun barrel roll on the whole app
+                document.body.style.transition = "transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+                document.body.style.transform = "rotate(360deg)";
+                
+                // Show a cheeky alert
+                setTimeout(() => {
+                    alert("You found the Alok Pandey easter egg! 🚀\nBuilding systems that scale. Clean code. Fast execution.");
+                    document.body.style.transform = "rotate(0deg)"; // reset
+                    tapCount = 0;
+                }, 1000);
+            }
+        }
+    </script>
 </body>
 </html>
