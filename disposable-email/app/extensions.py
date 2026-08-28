@@ -6,8 +6,10 @@ from flask_limiter import Limiter
 # If you are behind Cloudflare, you must use CF-Connecting-IP to get the real user IP, 
 # otherwise all requests will look like they come from Cloudflare's servers.
 def get_real_ip():
-    return request.headers.get("CF-Connecting-IP", request.remote_addr)
-
+    # 1. Try Cloudflare's IP header
+    # 2. Try Render's Load Balancer IP header
+    # 3. Fallback to default
+    return request.headers.get("CF-Connecting-IP") or request.headers.get("X-Forwarded-For", request.remote_addr)
 
 limiter = Limiter(
     key_func=get_real_ip,

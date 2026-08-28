@@ -59,7 +59,7 @@ def generate_email():
 # Route 3: Fetch Inbox Messages
 # -------------------------------------------------------------------
 @main_bp.route("/inbox/<email_address>", methods=["GET"])
-@limiter.limit("5 per minute")
+@limiter.limit("30 per minute")
 def fetch_inbox(email_address):
     """
     Queries Redis for any messages stored under the specified email key.
