@@ -19,6 +19,13 @@ function toggleTheme() {
 async function generateNewEmail() {
     try {
         const response = await fetch("/generate");
+
+        // NEW: Check for rate limit!
+        if (response.status === 429) {
+            alert("Whoa there! You're generating emails too fast. Please wait a minute.");
+            return; // Stop execution
+        }
+
         const data = await response.json();
 
         if (data.status === "success") {
@@ -47,6 +54,21 @@ async function fetchMessages() {
 
     try {
         const response = await fetch(`/inbox/${currentEmail}`);
+
+        // NEW: Check for rate limit on auto-refresh!
+        if (response.status === 429) {
+            const container = document.getElementById("inbox-list");
+            // Only overwrite if it's currently empty, so we don't erase existing emails
+            if (container.innerHTML.includes("empty-state")) {
+                container.innerHTML = `<p class="empty-state" style="color: #ef4444;">Rate limit reached. Pausing refresh for a moment...</p>`;
+            }
+            
+            // Smart Strategy: Slow down the polling interval to 10 seconds to recover
+            clearInterval(fetchInterval);
+            fetchInterval = setInterval(fetchMessages, 10000); 
+            return; 
+        }
+
         const data = await response.json();
 
         if (data.status === "success") {

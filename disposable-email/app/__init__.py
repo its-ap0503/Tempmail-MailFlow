@@ -2,6 +2,8 @@
 from flask import Flask
 import os
 from app.extensions import limiter
+from flask import jsonify
+
 
 def create_app():
     # 1. Instantiate the flask object 
@@ -20,5 +22,13 @@ def create_app():
     # Importing here inside the function prevents circular dependency issues
     from app.routes import main_bp
     app.register_blueprint(main_bp)
+
+    # Catch 429 errors and return JSON instead of HTML
+    @app.errorhandler(429)
+    def ratelimit_handler(e):
+        return jsonify({
+            "status": "error",
+            "message": f"Rate limit exceeded: {e.description}"
+        }), 429
     
     return app
