@@ -17,10 +17,10 @@ main_bp = Blueprint("main", __name__)
 DOMAIN = "techwithap.site"
 
 
-def generate_random_string(length=9):
+def generate_random_string(length=36):
     """
     Generates a cryptographically secure random alphanumeric string
-    using Python's secrets module (e.g., 'a9x8k2m1q').
+    using Python's secrets module (e.g., 'a9x8k2m1q...').
     """
     allowed_chars = string.ascii_lowercase + string.digits
     return "".join(secrets.choice(allowed_chars) for _ in range(length))
@@ -101,12 +101,12 @@ def receive_webhook():
     parses headers and message body, and persists the payload into Redis.
     """
     # 1. Security Check: Verify secret header against environment variable
-    secret = request.headers.get("X-Webhook-Secret")
+    secret = request.headers.get("X-Webhook-Secret", "")
     expected_secret = os.environ.get("WEBHOOK_SECRET", "super-secret-key")
 
-    if secret != expected_secret:
+    if not secrets.compare_digest(secret, expected_secret):
         return jsonify({"error": "Unauthorized"}), 401
-
+    
     # 2. Extract the raw email string from the incoming HTTP request body
     raw_email_data = request.get_data(as_text=True)
     if not raw_email_data:
