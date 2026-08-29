@@ -242,3 +242,51 @@ button:disabled {
     line-height: 1.5;
     font-size: 0.95rem;
 }
+
+/* ==================================================
+   📱 MOBILE RESPONSIVENESS (Media Query)
+   ================================================== */
+@media (max-width: 600px) {
+    .container {
+        margin: 40px 15px; /* Reduce side margins */
+    }
+
+    header {
+        margin-top: 50px; /* Make room for the absolute theme button */
+    }
+
+    header h1 {
+        font-size: 2rem; /* Prevent wrapping on narrow screens */
+    }
+
+    .theme-btn {
+        /* Move button to top center to prevent overlap with title */
+        top: -45px;
+        right: 50%;
+        transform: translateX(50%);
+        width: max-content;
+    }
+
+    .email-box {
+        flex-direction: column; /* Stack input and generate button */
+    }
+
+    .meta-info {
+        flex-direction: column; /* Stack timer and refresh button */
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    #btn-refresh {
+        width: 100%; /* Make sync button full width */
+    }
+
+    .message-header {
+        flex-direction: column; /* Stack From/Subject text */
+        gap: 8px;
+    }
+
+    .card {
+        padding: 15px; /* Reclaim space on small screens */
+    }
+}
