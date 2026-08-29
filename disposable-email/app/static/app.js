@@ -107,6 +107,20 @@ async function fetchMessages() {
             if (data.expires_in_seconds > 0) {
                 remainingSeconds = data.expires_in_seconds;
             }
+        } else if (data.status === "expired") {
+            // Inbox has been destroyed on the server — stop everything
+            clearInterval(countdownInterval);
+            clearInterval(fetchInterval);
+            
+            const timerEl = document.getElementById("timer");
+            timerEl.textContent = "Destroyed";
+            timerEl.style.color = "#ef4444";
+            
+            document.getElementById("btn-refresh").disabled = true;
+            document.getElementById("inbox-list").innerHTML = `
+                <p class="empty-state" style="color: #ef4444;">This inbox has been destroyed. No one can send emails to this address anymore. Generate a new email to continue.</p>
+            `;
+            currentEmail = ""; // Clear so no further fetches happen
         }
     } catch (error) {
         console.error("Error fetching messages:", error);

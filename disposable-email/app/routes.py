@@ -5,7 +5,7 @@ import email
 from email import policy
 from email.utils import parseaddr
 from flask import Blueprint, jsonify, request, render_template
-from app.models import save_email, get_inbox, INBOX_TTL_SECONDS
+from app.models import save_email, get_inbox, register_inbox, is_inbox_active, INBOX_TTL_SECONDS
 from app.extensions import limiter
 
 # -------------------------------------------------------------------
@@ -48,6 +48,9 @@ def generate_email():
     username = generate_random_string()
     email_address = f"{username}@{DOMAIN}"
 
+    # Register this inbox in Redis — marks it as alive and eligible to receive emails
+    register_inbox(email_address)
+
     return jsonify({
         "status": "success",
         "email": email_address,
@@ -74,6 +77,17 @@ def fetch_inbox(email_address):
 
     # Fetch stored emails and remaining expiration seconds from Redis
     inbox_data = get_inbox(email_address.strip().lower())
+
+    # If the inbox has expired or was never generated, tell the client explicitly
+    if inbox_data.get("expired"):
+        return jsonify({
+            "status": "expired",
+            "email": email_address,
+            "expires_in_seconds": 0,
+            "count": 0,
+            "emails": [],
+            "message": "This inbox has expired and been destroyed. Generate a new email."
+        }), 200
 
     return jsonify({
         "status": "success",
@@ -106,8 +120,17 @@ def receive_webhook():
 
     if not secrets.compare_digest(secret, expected_secret):
         return jsonify({"error": "Unauthorized"}), 401
-    
-    # 2. Extract the raw email string from the incoming HTTP request body
+
+    # 2. Check if the target inbox is still alive BEFORE parsing the email
+    #    This rejects emails to expired/never-generated addresses early.
+    recipient_header = request.headers.get("X-Forwarded-To", "").strip().lower()
+    if recipient_header and not is_inbox_active(recipient_header):
+        return jsonify({
+            "error": "Inbox expired or does not exist",
+            "recipient": recipient_header
+        }), 410  # 410 Gone — the resource existed but has been destroyed
+
+    # 3. Extract the raw email string from the incoming HTTP request body
     raw_email_data = request.get_data(as_text=True)
     if not raw_email_data:
         return jsonify({"error": "Empty payload"}), 400
@@ -164,8 +187,33 @@ def receive_webhook():
     }
 
     # 7. Save to Redis under the recipient key
+    # 8. Final gate: verify inbox is still active before saving
+    #    (defense-in-depth — catches edge case where inbox expires between
+    #     the header check and this point)
     if recipient_clean:
+        if not is_inbox_active(recipient_clean):
+            return jsonify({
+                "error": "Inbox expired or does not exist",
+                "recipient": recipient_clean
+            }), 410
+
         save_email(recipient_clean, payload)
         return jsonify({"status": "saved", "recipient": recipient_clean}), 200
 
     return jsonify({"error": "No valid recipient found in email"}), 400
+
+
+# -------------------------------------------------------------------
+# Route 5: Inbox Active Check (used by Cloudflare Worker pre-flight)
+# -------------------------------------------------------------------
+@main_bp.route("/inbox/check/<email_address>", methods=["GET"])
+def check_inbox_active(email_address):
+    """
+    Lightweight endpoint for the Cloudflare Worker to check if an inbox
+    is still alive before forwarding the email. Returns 200 if active,
+    404 if expired or never generated.
+    """
+    if is_inbox_active(email_address.strip().lower()):
+        return jsonify({"status": "active"}), 200
+    else:
+        return jsonify({"status": "expired"}), 404
